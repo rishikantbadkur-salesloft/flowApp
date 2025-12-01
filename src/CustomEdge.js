@@ -1,4 +1,4 @@
-import { getBezierPath, EdgeText } from 'reactflow';
+import { BaseEdge, EdgeLabelRenderer, getBezierPath } from '@xyflow/react';
 
 export default function CustomEdge({
   id,
@@ -9,7 +9,7 @@ export default function CustomEdge({
   targetY,
   targetPosition,
   label,
-  markerEnd, // Receive the markerEnd prop
+  markerEnd,
   style,
 }) {
   const [edgePath, labelX, labelY] = getBezierPath({
@@ -21,37 +21,36 @@ export default function CustomEdge({
     targetPosition,
   });
 
-  // Heuristic to approximate text width for the background rectangle
-  const labelWidth = label.length;
-  const labelHeight = 14;
+  // Calculate the angle of the straight line between the source and target points.
+  let angle = Math.atan2(targetY - sourceY, targetX - sourceX) * 180 / Math.PI;
+
+  // When the angle is outside the comfortable reading range, rotate it 180 degrees.
+  if (angle > 90 || angle < -90) {
+    angle += 180;
+  }
 
   return (
     <>
-      <path
+      <BaseEdge
         id={id}
-        style={{ ...style, strokeWidth: 1, fill: 'none' }}
-        className="react-flow__edge-path"
-        d={edgePath}
-        markerEnd={markerEnd} // Apply the marker to the end of the path
+        path={edgePath}
+        markerEnd={markerEnd}
+        style={style}
       />
-      <g transform={`translate(${labelX}, ${labelY})`}>
-        <rect
-          x={-labelWidth / 2}
-          y={-labelHeight / 2}
-          width={labelWidth}
-          height={labelHeight}
-          fill="white"
-          rx={3}
-          ry={3}
-        />
-        <text
-          style={{ fontSize: '12px', fill: '#555' }}
-          textAnchor="middle"
-          dominantBaseline="middle"
+      <EdgeLabelRenderer>
+        <div
+          style={{
+            position: 'absolute',
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px) rotate(${angle}deg)`,
+            background: label === "influences" ? 'lightgreen' : 'lightblue',
+            padding: '2px 4px',
+            borderRadius: 5,
+            fontSize: 8,
+          }}
         >
           {label}
-        </text>
-      </g>
+        </div>
+      </EdgeLabelRenderer>
     </>
   );
 }

@@ -9,7 +9,7 @@ import CustomEdge from "./CustomEdge";
 
 function CustomNode({data}){
   return (
-    <div style={{border: "1px solid black", borderRadius: 5, background: 'white'}}>
+    <div style={{ borderRadius: 5, background: 'white'}}>
       {data.handles?.map(handle => (
         <Handle key={handle.id} id={handle.id} type={handle.type} position={handle.position} style={{...handle.style, visibility: handle.type === 'source' ? 'visible' : 'hidden'}} isConnectable={true} />
       ))}
@@ -123,7 +123,7 @@ export default function App() {
         nodeTypes={nodeTypes} 
         edgeTypes={edgeTypes} 
       >
-        <Background />
+        <Background style={{backgroundColor: '#f4f5f8'}}/>
         <Controls />
       </ReactFlow>
     </div>

@@ -1,7 +1,5 @@
 import dagre from "dagre"
 
- 
-
 const influenceRank = {
     high:0,
     medium:1,
@@ -63,13 +61,12 @@ export const getLayoutedElements = (nodes, edges) => {
             }
         } else {
             // Vertical connection is more prominent
-            edge.sourceHandle = dy > 0 ? 'bottom-src' : 'top-src';
+            edge.sourceHandle = dy > 0 ? 'bottom-src' : 'top-src'; // dy > 0 means target is below source
             edge.targetHandle = dy > 0 ? 'top-tgt' : 'bottom-tgt';
         }
         return edge;
     });
 
-    console.log("final edges", nodes);
     
     
 

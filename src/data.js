@@ -5,7 +5,8 @@ export const backendNodes = [
     {id: "4", name: "Lisa", influence: "low"},
     {id: "5", name: "Adam", influence: "low"},
     {id: "6", name: "Charles", influence: "medium"},
-    {id: "7", name: "Robert", influence: "high"}
+    {id: "7", name: "Robert", influence: "medium"},
+    // {id: "8", name: "John", influence: "high"}
 ]
 
 export const backendEdges = [
@@ -16,5 +17,5 @@ export const backendEdges = [
     {source: "5", target: "3", relationship: "influences"},
     {source: "4", target: "7", relationship: "influences"},
     {source: "6", target: "1", relationship: "influences"},
-
+    // {source: "8", target: "7", relationship: "defers to"},
 ]

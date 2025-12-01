@@ -1,6 +1,6 @@
-import React, { useMemo } from "react"
-import ReactFlow, { Background, Controls, Handle, MarkerType } from "reactflow"
-import "reactflow/dist/style.css"
+import  { useMemo, useEffect } from "react"
+import { ReactFlow, Background, Controls, Handle, MarkerType, useNodesState, useEdgesState } from "@xyflow/react"
+import "@xyflow/react/dist/style.css"
 
 
 import { backendNodes, backendEdges } from "./data"
@@ -9,49 +9,50 @@ import CustomEdge from "./CustomEdge";
 
 function CustomNode({data}){
   return (
-    <div style={{padding: 10, border: "1px solid black", borderRadius: 5}}>
+    <div style={{border: "1px solid black", borderRadius: 5, background: 'white'}}>
       {data.handles?.map(handle => (
         <Handle key={handle.id} id={handle.id} type={handle.type} position={handle.position} style={handle.style} isConnectable={true} />
       ))}
-    <div>{data.label}</div>
+      <div style={{padding: 10}}>{data.label}</div>
     </div>
   )
 }
 
 
 export default function App() {
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   const nodeTypes = useMemo(() => ({ person: CustomNode }), []);
   const edgeTypes = useMemo(() => ({ default: CustomEdge }), []);
-  const defaultEdgeOptions = {
-    markerEnd: {
-      type: MarkerType.Arrow,
-      color: 'green',
-    },
-    
-  };
-  const nodes = backendNodes.map((item)=> ({
-    id: item.id,
-    data: { label: item.name, influence: item.influence },
-    position: { x: 0, y: 0 },
-    type: 'person',
-  }))
 
+  useEffect(() => {
+    const initialNodes = backendNodes.map((item)=> ({
+      id: item.id,
+      data: { label: item.name, influence: item.influence },
+      position: { x: 0, y: 0 },
+      type: 'person',
+    }));
 
-  const edges = backendEdges.map((item, index)=> ({
-    id: `edge-${item.source}-${item.target}-${index}`,
-    source: item.source,
-    target: item.target,
-    animated: false,
-    label: item.relationship,
-    style: item.relationship === "influences" ? { stroke: 'green' } : { stroke: 'gray', strokeDasharray: '6' },
-  }))
+    const initialEdges = backendEdges.map((item, index)=> ({
+      id: `edge-${item.source}-${item.target}-${index}`,
+      source: item.source,
+      target: item.target,
+      animated: false,
+      label: item.relationship,
+      style: item.relationship === "influences" ? { stroke: 'green' } : { stroke: 'blue', strokeDasharray: '5,5' },
+      markerEnd: {
+        type: MarkerType.Arrow,
+        color: item.relationship === "influences" ? 'green' : 'blue',
+        width: 20,
+        height: 20,
+      },
+    }));
 
-
-  const { nodes: layoutedNodes, edges: layoutedEdges } = useMemo(() => {
-    const { nodes: lNodes, edges: lEdges } = getLayoutedElements([...nodes], [...edges]);
+    // Calculate layout and dynamic handles
+    const { nodes: lNodes, edges: lEdges } = getLayoutedElements([...initialNodes], [...initialEdges]);
 
     // This map will store all handles for a given side of a node.
-    // e.g., { 'node-1-right': [{...}, {...}] }
     const handlesByNodeAndSide = new Map();
 
     // 1. Group all source and target handles by their node and position (side).
@@ -94,25 +95,34 @@ export default function App() {
           const offset = (i - (total - 1) / 2) * handleSpacing;
           const isVertical = side === 'top' || side === 'bottom';
           const transform = isVertical ? `translateX(${offset}px)` : `translateY(${offset}px)`;
-          const style = { transform, backgroundColor: handleInfo.type === 'source' ? 'green' : 'transparent' };
+          
+          // Determine handle color based on the edge's relationship type
+          const handleColor = edge?.label === 'influences' ? 'green' : 'blue';
+
+          const style = { 
+            transform, 
+            backgroundColor: handleInfo.type === 'source' ? handleColor : 'transparent' 
+          };
           node.data.handles.push({ id: newHandleId, type: handleInfo.type, position: side, style });
         });
       });
     });
 
-    return { nodes: lNodes, edges: lEdges };
-  }, [nodes, edges]);
+    setNodes(lNodes);
+    setEdges(lEdges);
+  }, [setNodes, setEdges]);
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <ReactFlow 
-        nodes={layoutedNodes} 
-        edges={layoutedEdges} 
+        nodes={nodes} 
+        edges={edges} 
         fitView 
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
         fitViewOptions={{padding: 0.2}} 
         nodeTypes={nodeTypes} 
         edgeTypes={edgeTypes} 
-        defaultEdgeOptions={defaultEdgeOptions}
       >
         <Background />
         <Controls />

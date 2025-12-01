@@ -9,7 +9,7 @@ import CustomEdge from "./CustomEdge";
 
 function CustomNode({data}){
   return (
-    <div style={{ borderRadius: 5, background: 'white'}}>
+    <div style={{ borderRadius: 5, background: 'white', padding: 5}}>
       {data.handles?.map(handle => (
         <Handle key={handle.id} id={handle.id} type={handle.type} position={handle.position} style={{...handle.style, visibility: handle.type === 'source' ? 'visible' : 'hidden'}} isConnectable={true} />
       ))}

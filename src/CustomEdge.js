@@ -75,6 +75,7 @@ export default function CustomEdge({
             padding: '0px 2px',
             borderRadius: 2,
             fontSize: 8,
+            color: label === "influences" ? 'darkgreen' : 'blue',
           }}
         >
           {label}

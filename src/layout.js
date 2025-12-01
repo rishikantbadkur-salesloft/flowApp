@@ -26,15 +26,13 @@ export const getLayoutedElements = (nodes, edges) => {
     nodes.forEach((node) => {
         const pos = dagreGraph.node(node.id);
 
-        let jitterX = 0
         let jitterY = 0
 
         
-        jitterX = 0;
         jitterY = (Math.random() - 0.5) * 40;
         
         node.position = {
-            x: pos.x + jitterX,
+            x: pos.x,
             y: pos.y + jitterY,
             
         };

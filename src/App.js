@@ -79,7 +79,6 @@ export default function App() {
         const key = `${node.id}-${side}`;
         const handlesOnSide = handlesByNodeAndSide.get(key);
         if (!handlesOnSide) return;
-
         const total = handlesOnSide.length;
         handlesOnSide.forEach((handleInfo, i) => {
           const newHandleId = `${handleInfo.baseId}-${i}`;

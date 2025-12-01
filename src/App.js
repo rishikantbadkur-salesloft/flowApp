@@ -11,7 +11,7 @@ function CustomNode({data}){
   return (
     <div style={{border: "1px solid black", borderRadius: 5, background: 'white'}}>
       {data.handles?.map(handle => (
-        <Handle key={handle.id} id={handle.id} type={handle.type} position={handle.position} style={handle.style} isConnectable={true} />
+        <Handle key={handle.id} id={handle.id} type={handle.type} position={handle.position} style={{...handle.style, visibility: handle.type === 'source' ? 'visible' : 'hidden'}} isConnectable={true} />
       ))}
       <div style={{padding: 10}}>{data.label}</div>
     </div>
@@ -100,7 +100,7 @@ export default function App() {
 
           const style = { 
             transform, 
-            backgroundColor: handleInfo.type === 'source' ? handleColor : 'transparent' 
+            backgroundColor: handleInfo.type === 'source' ? handleColor : 'transparent',     
           };
           node.data.handles.push({ id: newHandleId, type: handleInfo.type, position: side, style });
         });
